@@ -1,0 +1,1 @@
+export const SOCKET_HOST = 'localhost:6001';

@@ -1,7 +1,7 @@
-import React          from 'react';
-import PropTypes      from 'prop-types';
-import makeCWRP       from "../utils/makeCWRP";
-import TableContainer from "../containers/TableContainer";
+import React     from 'react';
+import PropTypes from 'prop-types';
+import makeCWRP  from "../utils/makeCWRP";
+import Table     from './Table';
 
 class App extends React.Component {
     componentWillReceiveProps = makeCWRP(this, {token: 'input_token'});
@@ -70,7 +70,7 @@ class App extends React.Component {
                     && <span>Socket ID: {this.props.socket_id}</span>
                 }
                 {
-                    this.props.socket_id && <TableContainer/>
+                    this.props.socket_id && <Table/>
                 }
             </div>
         )

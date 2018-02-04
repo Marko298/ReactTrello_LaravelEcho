@@ -1,40 +1,18 @@
 import * as types from '../constants/ActionTypes';
 import { fromJS } from 'immutable';
 
+//Predefined table because of compatibility
 const initialState = {
-    columns: fromJS([
-        {
-            id:    1,
-            cards: [
-                {
-                    id:   1,
-                    text: 'Some card'
-                },
-                {
-                    id:   2,
-                    text: 'New card 2'
-                },
-                {
-                    id:   3,
-                    text: 'Some card 3'
-                },
-                {
-                    id:   4,
-                    text: 'Some cool card'
-                }
-            ],
-        },
-        {
-            id:    2,
-            cards: [
-                {
-                    id:   6,
-                    text: 'Some strange card'
-                }
-            ]
+    isLoading: false,
+    entities:  fromJS({
+        columns: {},
+        tables:  {
+            1: {
+                id:      1,
+                columns: []
+            }
         }
-
-    ]),
+    }),
 };
 
 // const card = (state, action) => {
@@ -53,7 +31,7 @@ const column = (state, action) => {
         case types.CARD_ADD:
             return state.updateIn(
                 ['cards'],
-                (cards) => cards.insert(action.dIndex, action.card)
+                (cards) => cards.insert(action.dIndex, action.cardId)
             );
 
         default:
@@ -63,28 +41,42 @@ const column = (state, action) => {
 
 const table = (state = initialState, action) => {
     switch (action.type) {
+        case types.TABLE_LOAD_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                entities:  fromJS(action.entities),
+            };
+
+        case types.TABLE_LOAD:
+            return {
+                ...state,
+                isLoading: true,
+            };
+
+
         case types.CARD_ADD:
             return {
                 ...state,
             };
 
         case types.CARD_MOVE:
+            const e = state.entities;
             //We overwriting first action in order to remove card from old location
-            //and second to add card to new location
-            const columns = state
-                .columns
+            //and second to addCard card to new location
+            const entities = e
                 .updateIn(
-                    [action.sColIndex],
+                    ['columns', action.sColId],
                     col => column(col, {...action, type: types.CARD_REMOVE})
                 )
                 .updateIn(
-                    [action.dColIndex],
+                    ['columns', action.dColId],
                     col => column(col, {...action, type: types.CARD_ADD})
                 );
 
             return {
                 ...state,
-                columns: columns,
+                entities: entities
             };
 
         case types.CARD_REMOVE:

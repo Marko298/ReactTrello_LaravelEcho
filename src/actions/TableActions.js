@@ -1,34 +1,53 @@
-import * as types        from '../constants/ActionTypes';
-import { fromDroppable } from "../utils/dndHelper";
+import * as types    from '../constants/ActionTypes';
+import { toId }      from "../utils/dndHelper";
+import { HTTP_HOST } from "../constants/ApiConstants";
+import { normalize } from 'normalizr'
+import { table }     from '../constants/BackendModels'
 
-export const move = (result) => (dispatch, getState) => {
-    const {table: {columns}} = getState();
-    const {id: sColId, index: sColIndex} = fromDroppable(result.source.droppableId);
-    const {id: dColId, index: dColIndex} = fromDroppable(result.destination.droppableId);
-    const card = columns.getIn([sColIndex, 'cards', result.source.index]);
+export const moveCard = (result) => async (dispatch, getState) => {
+    const sColId = toId(result.source.droppableId);
+    const dColId = toId(result.destination.droppableId);
+    const cardId = toId(result.draggableId);
 
-    dispatch({
+    await dispatch({
         type:   types.CARD_MOVE,
-        card,
+        cardId,
         sColId,
         dColId,
-        sColIndex,
-        dColIndex,
         sIndex: result.source.index,
-        dIndex: result.destination.index
+        dIndex: result.destination.index,
     });
+
+
 };
 
-export const remove = (source, card) => (dispatch, getState) => {
+export const removeCard = (source, card) => (dispatch, getState) => {
     return {
         type: types.CARD_REMOVE,
         card: card
     }
 };
 
-export const add = (destination, card) => (dispatch, getState) => {
+export const addCard = (destination, card) => (dispatch, getState) => {
     return {
         type: types.CARD_ADD,
         card: card
     }
+};
+
+
+export const loadTable = () => async (dispatch) => {
+    await dispatch({
+        type: types.TABLE_LOAD
+    });
+
+    const r = await fetch(HTTP_HOST + '/cards');
+    const json = await r.json();
+
+    const {entities} = normalize(json, table);
+
+    dispatch({
+        entities: entities,
+        type:     types.TABLE_LOAD_SUCCESS,
+    })
 };

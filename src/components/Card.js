@@ -3,10 +3,12 @@ import PropTypes            from 'prop-types';
 import { Draggable }        from "react-beautiful-dnd";
 import { toDraggable }      from "../utils/dndHelper";
 import { Map }              from "immutable";
+import { connect }          from "react-redux";
 
 class Card extends Component {
     render() {
-        const {card, index} = this.props;
+        const {id, cards, index} = this.props;
+        const card = cards.get(id);
         const draggableId = toDraggable(card.get('id'), index);
 
         return (
@@ -32,8 +34,21 @@ class Card extends Component {
 }
 
 Card.propTypes = {
-    card:  PropTypes.instanceOf(Map).isRequired,
+    id:    PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
+
+    cards: PropTypes.instanceOf(Map).isRequired
 };
 
-export default Card;
+
+const mapStateToProps = (state) => {
+    const e = state.table.entities;
+
+    return {
+        cards: e.get('cards'),
+    }
+};
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Card);

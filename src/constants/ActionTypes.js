@@ -3,6 +3,12 @@ export const CONNECTING = 'CONNECTING';
 export const DISCONNECTED = 'DISCONNECTED';
 export const SAVE_TOKEN = 'SAVE_TOKEN';
 
+export const TABLE_LOAD = 'TABLE_LOAD';
+export const TABLE_LOAD_SUCCESS = 'TABLE_LOAD_SUCCESS';
+
 export const CARD_ADD = 'CARD_ADD';
 export const CARD_MOVE = 'CARD_MOVE';
 export const CARD_REMOVE = 'CARD_REMOVE';
+
+export const PERSIST_CARD_MOVE = 'PERSIST_CARD_MOVE';
+export const PERSIST_CARD_MOVE_SUCCESS = 'PERSIST_CARD_MOVE_SUCCESS';

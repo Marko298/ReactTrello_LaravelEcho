@@ -1,22 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 import { Draggable }        from "react-beautiful-dnd";
-import { toDraggable }      from "../utils/dndHelper";
 import { Map }              from "immutable";
 import { connect }          from "react-redux";
 
 class Card extends Component {
     render() {
-        const {id, cards, index} = this.props;
-        const card = cards.get(id);
-        const draggableId = toDraggable(card.get('id'), index);
+        const {id, index} = this.props;
+        const card = this.props.cards.get(id);
 
         return (
-            <Draggable draggableId={draggableId} index={index}>
+            <Draggable draggableId={id} index={index}>
                 {(provided) => (
                     <div>
                         <div
-                            className="Card"
+                            className="Card" id={`Card-${id}`}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}

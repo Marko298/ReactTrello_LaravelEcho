@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 import { Droppable }        from "react-beautiful-dnd";
-import { toDroppable }      from "../utils/dndHelper";
 import Card                 from "./Card";
 import { connect }          from "react-redux";
 import { Map }              from 'immutable';
@@ -14,15 +13,14 @@ class Column extends Component {
     };
 
     render() {
-        const {index, columns, id} = this.props;
-        const column = columns.get(id);
-        const droppableId = toDroppable(column.get('id'), index);
+        const {index, id} = this.props;
+        const column = this.props.columns.get(id);
 
         return (
-            <div className="Column">
+            <div className="Column" id={`Column-${id}`}>
                 <div className="header">
                 </div>
-                <Droppable index={index} droppableId={droppableId}>
+                <Droppable index={index} droppableId={id}>
                     {(provided) => (
                         <div ref={provided.innerRef} className="droppable">
                             {this.cards(column.get('cards'))}

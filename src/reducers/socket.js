@@ -3,7 +3,7 @@ import * as states from '../constants/SocketStates';
 
 const initialState = {
     echo:      {},
-    token:     localStorage.getItem('token'),
+    token:     localStorage.getItem('token') || '',
     socket_id: '',
     state:     states.DISCONNECTED
 };
@@ -34,7 +34,7 @@ const socket = (state = initialState, action) => {
                 socket_id: initialState.socket_id,
             };
 
-        case types.SAVE_TOKEN:
+        case types.TOKEN_UPDATED:
             return {
                 ...state,
                 token: action.token

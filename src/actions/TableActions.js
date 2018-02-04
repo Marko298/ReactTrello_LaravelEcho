@@ -1,21 +1,16 @@
 import * as types    from '../constants/ActionTypes';
-import { toId }      from "../utils/dndHelper";
 import { HTTP_HOST } from "../constants/ApiConstants";
 import { normalize } from 'normalizr'
 import { table }     from '../constants/BackendModels'
 
-export const moveCard = (result) => async (dispatch, getState) => {
-    const sColId = toId(result.source.droppableId);
-    const dColId = toId(result.destination.droppableId);
-    const cardId = toId(result.draggableId);
-
+export const moveCard = (result) => async (dispatch) => {
     await dispatch({
         type:   types.CARD_MOVE,
-        cardId,
-        sColId,
-        dColId,
+        cardId: result.draggableId,
         sIndex: result.source.index,
         dIndex: result.destination.index,
+        sColId: result.source.droppableId,
+        dColId: result.destination.droppableId,
     });
 
 

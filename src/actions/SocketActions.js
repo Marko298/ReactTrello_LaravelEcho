@@ -21,60 +21,45 @@ export const connect = () => async (dispatch, getState) => {
         .socket;
 
     socket.on('connect', () => {
-        dispatch(connected(echo));
+        dispatch({
+            type: types.CONNECTED,
+            echo: echo,
+        });
     });
 
     socket.on('disconnect', () => {
-        dispatch(disconnected())
+        dispatch({
+            type: types.DISCONNECTED,
+        })
     });
 
-    dispatch(connecting(echo));
-
-};
-
-const connecting = (echo) => {
-    return {
+    dispatch({
         type: types.CONNECTING,
         echo: echo,
-    }
+    });
+
 };
 
 export const reconnect = () => async (dispatch) => {
     await dispatch(disconnect());
-    return dispatch(connect());
+    await dispatch(connect());
 };
 
 export const updateToken = (token) => async (dispatch) => {
-    await dispatch(saveToken(token));
-    return dispatch(reconnect());
+    localStorage.setItem('token', token);
 
+    await dispatch({
+        type:  types.TOKEN_UPDATED,
+        token: token,
+    });
+
+    dispatch(reconnect());
 };
 
-export const disconnect = () => async (dispatch, getState) => {
+export const disconnect = () => (dispatch, getState) => {
     const {socket: {echo}} = getState();
 
-    if (echo.hasOwnProperty('connector')) {
+    if (echo.connector) {
         echo.connector.disconnect();
     }
 };
-
-const connected = (echo) => {
-    return {
-        type: types.CONNECTED,
-        echo: echo,
-    }
-};
-
-const disconnected = () => {
-    return {
-        type: types.DISCONNECTED,
-    }
-};
-
-const saveToken = (token) => {
-    return {
-        type:  types.SAVE_TOKEN,
-        token: token,
-    }
-};
-

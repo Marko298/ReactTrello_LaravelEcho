@@ -1,7 +1,7 @@
 export const CONNECTED = 'CONNECTED';
 export const CONNECTING = 'CONNECTING';
 export const DISCONNECTED = 'DISCONNECTED';
-export const SAVE_TOKEN = 'SAVE_TOKEN';
+export const TOKEN_UPDATED = 'TOKEN_UPDATED';
 
 export const TABLE_LOAD = 'TABLE_LOAD';
 export const TABLE_LOAD_SUCCESS = 'TABLE_LOAD_SUCCESS';

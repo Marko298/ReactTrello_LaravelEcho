@@ -9,7 +9,6 @@ import { connect }                                  from "react-redux";
 
 class Table extends Component {
     onDragEnd = (result) => {
-        // console.log(result);
         if (result.destination) {
             this.props.moveCard(result);
         }

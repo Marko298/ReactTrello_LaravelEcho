@@ -2,9 +2,10 @@ import React, { Component }                         from 'react';
 import PropTypes                                    from 'prop-types';
 import { DragDropContext }                          from 'react-beautiful-dnd';
 import Column                                       from "./Column";
-import { Map }                                      from "immutable";
+import { List }                                     from "immutable";
 import { addCard, loadTable, moveCard, removeCard } from "../actions/TableActions";
 import { connect }                                  from "react-redux";
+import { getColumnsOrder }                          from "../selectors/TableSelectors";
 
 
 class Table extends Component {
@@ -14,14 +15,10 @@ class Table extends Component {
         }
     };
 
-    columns = (columns) => {
-        return columns.map((column, index) => {
-            return <Column
-                key={index}
-                index={index}
-                id={column.toString()}
-            />
-        });
+    columns = () => {
+        return this.props.columns.map((column, index) =>
+            <Column key={index} index={index} id={column}/>
+        );
     };
 
 
@@ -34,7 +31,7 @@ class Table extends Component {
         return (
             <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className="Table">
-                    {this.columns(this.props.table.get('columns'))}
+                    {this.columns()}
                 </div>
             </DragDropContext>
         );
@@ -42,7 +39,7 @@ class Table extends Component {
 }
 
 Table.propTypes = {
-    table: PropTypes.instanceOf(Map).isRequired,
+    columns: PropTypes.instanceOf(List).isRequired,
 
     addCard:    PropTypes.func.isRequired,
     moveCard:   PropTypes.func.isRequired,
@@ -55,10 +52,8 @@ Table.defaultProps = {};
 
 
 const mapStateToProps = (state) => {
-    const e = state.table.entities;
-
     return {
-        table: e.getIn(['tables', (1).toString()]),
+        columns: getColumnsOrder(state),
     }
 };
 

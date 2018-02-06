@@ -4,26 +4,26 @@ import { Droppable }        from "react-beautiful-dnd";
 import Card                 from "./Card";
 import { connect }          from "react-redux";
 import { Map }              from 'immutable';
+import { getColumn }        from "../selectors/TableSelectors";
 
 class Column extends Component {
-    cards = (cards) => {
-        return cards.map((card, index) => (
-            <Card id={card.toString()} key={index} index={index}/>
-        ));
+    cards = () => {
+        const cards = this.props.column.get('cards');
+        return cards.map((card, index) =>
+            <Card id={card} key={index} index={index}/>
+        );
     };
 
     render() {
-        const {index, id} = this.props;
-        const column = this.props.columns.get(id);
+        const {id, index, column} = this.props;
 
         return (
             <div className="Column" id={`Column-${id}`}>
-                <div className="header">
-                </div>
-                <Droppable index={index} droppableId={id}>
+                <div className="header">{column.get('name')}</div>
+                <Droppable index={index} droppableId={id.toString()}>
                     {(provided) => (
                         <div ref={provided.innerRef} className="droppable">
-                            {this.cards(column.get('cards'))}
+                            {this.cards()}
                             {provided.placeholder}
                         </div>
                     )}
@@ -34,15 +34,15 @@ class Column extends Component {
 }
 
 Column.propTypes = {
-    id:    PropTypes.string.isRequired,
+    id:    PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
 
-    columns: PropTypes.instanceOf(Map).isRequired,
+    column: PropTypes.instanceOf(Map).isRequired,
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
     return {
-        columns: state.table.entities.get('columns'),
+        column: getColumn(state, props.id),
     }
 };
 

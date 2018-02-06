@@ -3,24 +3,24 @@ import PropTypes            from 'prop-types';
 import { Draggable }        from "react-beautiful-dnd";
 import { Map }              from "immutable";
 import { connect }          from "react-redux";
+import { getCard }          from "../selectors/TableSelectors";
 
 class Card extends Component {
     render() {
-        const {id, index} = this.props;
-        const card = this.props.cards.get(id);
+        const {id, index, card} = this.props;
 
         return (
             <Draggable draggableId={id} index={index}>
                 {(provided) => (
                     <div>
                         <div
-                            className="Card" id={`Card-${id}`}
+                            className="Card" id={id.toString()}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                         >
                             <div className="inner">
-                                {card.get('text')}
+                                {card.get('name')}
                             </div>
                         </div>
                         {provided.placeholder}
@@ -32,18 +32,17 @@ class Card extends Component {
 }
 
 Card.propTypes = {
-    id:    PropTypes.string.isRequired,
+    id:    PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
 
-    cards: PropTypes.instanceOf(Map).isRequired
+    card: PropTypes.instanceOf(Map).isRequired
 };
 
 
-const mapStateToProps = (state) => {
-    const e = state.table.entities;
+const mapStateToProps = (state, props) => {
 
     return {
-        cards: e.get('cards'),
+        card: getCard(state, props.id),
     }
 };
 

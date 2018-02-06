@@ -33,7 +33,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this.props.connectSocket()
+        this.props.connectSocket();
     }
 
     render() {

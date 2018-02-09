@@ -1,37 +1,11 @@
 import * as types            from '../constants/ActionTypes';
 import { fromJS, List, Map } from 'immutable';
 
-//Predefined table because of compatibility
 const initialState = {
     isLoading:     false,
     entities:      new Map(),
     columns_order: new List(),
 };
-
-// const card = (state, action) => {
-//     switch (action.type) {
-//         default:
-//             return state;
-//     }
-// };
-
-// const column = (state, action) => {
-//     switch (action.type) {
-//         case types.CARD_MOVE:
-//             if (state.get('id') === action.sColId) {
-//                 return state
-//             } else {
-//                 return state.updateIn(
-//                     ['cards'],
-//                     (cards) => cards.insert(action.dIndex, action.cardId)
-//                 );
-//             }
-//
-//
-//         default:
-//             return state;
-//     }
-// };
 
 const table = (state = initialState, action) => {
     switch (action.type) {
@@ -49,60 +23,34 @@ const table = (state = initialState, action) => {
                 isLoading: true,
             };
 
-
         case types.CARD_ADD:
             return {
                 ...state,
             };
 
+        case types.SERVER_CARD_MOVE:
         case types.CARD_MOVE:
-            const entities = state
-                .entities
-                .setIn([
-                    'cards',
-                    action.cardId,
-                    'pos'
-                ], action.pos)
-                .deleteIn([
-                    'columns',
-                    action.sColId,
-                    'cards',
-                    action.sIndex,
-                ])
-                .updateIn([
-                    'columns',
-                    action.dColId,
-                    'cards'
-                ], (cards) => cards.insert(action.dIndex, parseInt(action.cardId, 10)));
-
-            return {
-                ...state,
-                entities: entities
-            };
-
-        case types.CARD_MOVE_FAILED:
             const e = state
                 .entities
-                .setIn([
-                    'cards',
-                    action.cardId,
-                    'pos'
-                ], action.old_pos)
-                .deleteIn([
-                    'columns',
-                    action.dColId,
-                    'cards',
-                    action.dIndex,
-                ])
-                .updateIn([
-                    'columns',
-                    action.sColId,
-                    'cards'
-                ], (cards) => cards.insert(action.sIndex, parseInt(action.cardId, 10)));
+                .deleteIn(['columns', action.sColId.toString(), 'cards', action.sIndex])
+                .updateIn(['columns', action.dColId.toString(), 'cards'], (cards) => cards.insert(action.dIndex, parseInt(action.cardId, 10)))
+                .updateIn(['cards', action.cardId.toString()], card => card.set('position', action.dIndex).set('column_id', action.dColId));
 
             return {
                 ...state,
                 entities: e
+            };
+
+        case types.CARD_MOVE_FAILED:
+            const e2 = state
+                .entities
+                .setIn(['cards', action.cardId, 'position'], action.sIndex)
+                .deleteIn(['columns', action.dColId.toString(), 'cards', action.dIndex])
+                .updateIn(['columns', action.sColId.toString(), 'cards'], (cards) => cards.insert(action.sIndex, parseInt(action.cardId, 10)));
+
+            return {
+                ...state,
+                entities: e2
             };
 
         case types.CARD_REMOVE:

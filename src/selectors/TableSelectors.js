@@ -16,3 +16,13 @@ export const getColumn = createCachedSelector(
     (columns, id) => columns.get(id.toString()),
 )(pass);
 
+
+export const getCardColumn = createCachedSelector(
+    [getCard],
+    card => card.get('column_id')
+)(pass);
+
+export const getCardIndex = createCachedSelector(
+    [getCard],
+    card => card.get('position')
+)(pass);

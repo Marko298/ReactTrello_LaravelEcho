@@ -1,7 +1,8 @@
-import * as types      from '../constants/ActionTypes';
-import Echo            from "laravel-echo";
-import io              from 'socket.io-client';
-import { SOCKET_HOST } from "../constants/ApiConstants";
+import * as types                      from '../constants/ActionTypes';
+import Echo                            from "laravel-echo";
+import io                              from 'socket.io-client';
+import { SOCKET_HOST }                 from "../constants/ApiConstants";
+import { getCardColumn, getCardIndex } from "../selectors/TableSelectors";
 
 export const connect = () => async (dispatch, getState) => {
     const {token} = getState();
@@ -25,6 +26,7 @@ export const connect = () => async (dispatch, getState) => {
             type: types.CONNECTED,
             echo: echo,
         });
+        dispatch(subscribe());
     });
 
     socket.on('disconnect', () => {
@@ -62,4 +64,44 @@ export const disconnect = () => (dispatch, getState) => {
     if (echo.connector) {
         echo.connector.disconnect();
     }
+};
+
+export const subscribe = () => (dispatch, getState) => {
+    const state = getState();
+
+    state
+        .socket
+        .echo
+        .channel('table')
+        .listen('CardMoved', (e) => {
+            /**
+             * @property {object} e
+             * @property {int} e.card_id
+             * @property {int} e.s_index
+             * @property {int} e.d_index
+             * @property {int} e.s_column_id
+             * @property {int} e.d_column_id
+             */
+
+            const state = getState();
+            if (getCardColumn(state, e.card_id) !== e.d_column_id || getCardIndex(state, e.card_id) !== e.d_index) {
+                dispatch(createServerCardMove(e))
+            }
+        });
+
+    dispatch({
+        type: types.SUBSCRIBED
+    })
+};
+
+const createServerCardMove = (e) => {
+
+    return {
+        type:   types.SERVER_CARD_MOVE,
+        cardId: e.card_id,
+        sIndex: e.s_index,
+        dIndex: e.d_index,
+        sColId: e.s_column_id,
+        dColId: e.d_column_id,
+    };
 };

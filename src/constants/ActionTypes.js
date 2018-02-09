@@ -1,5 +1,6 @@
 export const CONNECTED = 'CONNECTED';
 export const CONNECTING = 'CONNECTING';
+export const SUBSCRIBED = 'SUBSCRIBED';
 export const DISCONNECTED = 'DISCONNECTED';
 export const TOKEN_UPDATED = 'TOKEN_UPDATED';
 
@@ -12,3 +13,4 @@ export const CARD_REMOVE = 'CARD_REMOVE';
 export const CARD_MOVE_SUCCESS = 'CARD_MOVE_SUCCESS';
 export const CARD_MOVE_FAILED = 'CARD_MOVE_FAILED';
 
+export const SERVER_CARD_MOVE = 'SERVER_CARD_MOVE';
